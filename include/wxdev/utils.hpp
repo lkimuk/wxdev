@@ -1,7 +1,7 @@
 #ifndef WXDEV_UTILS_HPP
 #define WXDEV_UTILS_HPP
 
-#include "./sha1/sha1.hpp"
+#include "sha1.hpp"
 #include <curl/curl.h>
 #include <string_view>
 #include <vector>
@@ -44,6 +44,8 @@ namespace wxdev {
 			char* redirect_url = nullptr;
 			long res_code;
 			code = curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &res_code);
+			if(res_code == 404) return "";
+			
 			curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
 			code = curl_easy_getinfo(curl, CURLINFO_REDIRECT_URL, &redirect_url);
 			if (redirect_url) {

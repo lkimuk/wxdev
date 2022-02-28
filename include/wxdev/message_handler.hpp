@@ -20,7 +20,7 @@ struct response {
 		type
 	};
 	
-	// 设置消息值
+	// 锟斤拷锟斤拷锟斤拷息值
 	void set(response_body type, const char* value) {
 		auto key = get_response_body(type);
 		pugi::xml_node root = doc_.child("xml");
@@ -30,7 +30,7 @@ struct response {
 private:
 	response() = default;
 
-	// 初始化响应消息
+	// 锟斤拷始锟斤拷锟斤拷应锟斤拷息
 	void initialize(const pugi::xml_node& request) {
 		pugi::xml_node root = doc_.append_child("xml");
 		auto to_user_name = request.child("FromUserName").text();
@@ -43,11 +43,11 @@ private:
 		root.append_child("ToUserName").text().set(to_user_name);
 		root.append_child("FromUserName").text().set(from_user_name);
 		root.append_child("CreateTime").text().set(millsec.count());
-		root.append_child("MsgType").text().set("text"); // 默认回复类型为text
+		root.append_child("MsgType").text().set("text"); // 默锟较回革拷锟斤拷锟斤拷为text
 	}
 
 
-	// 获取字符形式的key
+	// 锟斤拷取锟街凤拷锟斤拷式锟斤拷key
 	const char* get_response_body(response_body type) {
 		static std::unordered_map<response_body, const char*> types{
 			{response_body::content, "Content"},
@@ -84,7 +84,7 @@ public:
 		res_.initialize(doc_.child("xml"));
 	}
 
-	// 返回消息长度
+	// 锟斤拷锟斤拷锟斤拷息锟斤拷锟斤拷
 	size_t size() {
 		return 1;
 	}
@@ -93,13 +93,13 @@ public:
 		handler_[type] = callback;
 	}
 
-	// 获取指定消息字段的值
+	// 锟斤拷取指锟斤拷锟斤拷息锟街段碉拷值
 	std::string get_value(const char* key) {
 		pugi::xml_node node = doc_.child("xml");
 		return node.child(key).text().as_string();
 	}
 
-	// 获取消息的类型
+	// 锟斤拷取锟斤拷息锟斤拷锟斤拷锟斤拷
 	std::string get_type() {
 		pugi::xml_node node = doc_.child("xml");
 		return node.child("MsgType").text().as_string();
@@ -107,8 +107,11 @@ public:
 
 	std::string data() {
 		auto p = handler_.find(get_type());
-		if (p == handler_.end())
-			throw std::runtime_error("error! failed to handle [" + get_type() + "] message.");
+		if (p == handler_.end()) {
+			// throw std::runtime_error("error! failed to handle [" + get_type() + "] message.");
+			res_.set(response::content, "failed to handle this message");
+			return res_.data();
+		}
 		(p->second)(res_);
 
 		return res_.data();
