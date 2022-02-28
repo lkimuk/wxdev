@@ -20,7 +20,7 @@ struct response {
 		type
 	};
 	
-	// ������Ϣֵ
+	// writes response value
 	void set(response_body type, const char* value) {
 		auto key = get_response_body(type);
 		pugi::xml_node root = doc_.child("xml");
@@ -30,7 +30,7 @@ struct response {
 private:
 	response() = default;
 
-	// ��ʼ����Ӧ��Ϣ
+	// initializes response message
 	void initialize(const pugi::xml_node& request) {
 		pugi::xml_node root = doc_.append_child("xml");
 		auto to_user_name = request.child("FromUserName").text();
@@ -47,7 +47,7 @@ private:
 	}
 
 
-	// ��ȡ�ַ���ʽ��key
+	// get string of response_type
 	const char* get_response_body(response_body type) {
 		static std::unordered_map<response_body, const char*> types{
 			{response_body::content, "Content"},
@@ -84,22 +84,23 @@ public:
 		res_.initialize(doc_.child("xml"));
 	}
 
-	// ������Ϣ����
-	size_t size() {
-		return 1;
-	}
+	// 
+	// size_t size() {
+	// 	return 1;
+	// }
 
+	// register message handler
 	void set_handler(const std::string& type, callback_type callback) {
 		handler_[type] = callback;
 	}
 
-	// ��ȡָ����Ϣ�ֶε�ֵ
+	// get value by key
 	std::string get_value(const char* key) {
 		pugi::xml_node node = doc_.child("xml");
 		return node.child(key).text().as_string();
 	}
 
-	// ��ȡ��Ϣ������
+	// return message type
 	std::string get_type() {
 		pugi::xml_node node = doc_.child("xml");
 		return node.child("MsgType").text().as_string();
